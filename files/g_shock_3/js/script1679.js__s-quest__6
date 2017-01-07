@@ -1,0 +1,138 @@
+var montharray=new Array("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec")
+function countdown(yr,m,d){
+	theyear=yr;themonth=m;theday=d
+	var today=new Date()
+	var todayy=today.getYear()
+	if (todayy < 1000) todayy+=1900
+	var todaym=today.getMonth()
+	var todayd=today.getDate()
+	var todayh=today.getHours()
+	var todaymin=today.getMinutes()
+	var todaysec=today.getSeconds()
+	var todaystring=montharray[todaym]+" "+todayd+", "+todayy+" "+todayh+":"+todaymin+":"+todaysec
+	futurestring=montharray[m-1]+" "+d+", "+yr
+	dd=Date.parse(futurestring)-Date.parse(todaystring)
+	dday=Math.floor(dd/(60*60*1000*24)*1)
+	dhour=Math.floor((dd%(60*60*1000*24))/(60*60*1000)*1)
+	dmin=Math.floor(((dd%(60*60*1000*24))%(60*60*1000))/(60*1000)*1)
+	dsec=Math.floor((((dd%(60*60*1000*24))%(60*60*1000))%(60*1000))/1000*1)
+	if(dday==0&&dhour==0&&dmin==0&&dsec==1){
+		$('.countdown').html('');
+		return
+	} else {
+		if(dhour < 10) dhour = '0'+dhour;
+		if(dmin < 10) dmin = '0'+dmin;
+		if(dsec < 10) dsec = '0'+dsec;
+		$('.countdown').html('00&nbsp;:&nbsp;' + dhour + "&nbsp;:&nbsp;" + dmin + "&nbsp;:&nbsp;" + dsec);
+	}
+	setTimeout("countdown(theyear,themonth,theday)",1000)
+}
+// Check Order Form
+var feed = {
+	submit: function(elem) {
+		var form;
+		jQuery(elem).parents().each(function() {
+			if(jQuery(this).is('form'))
+				form = jQuery(this);
+        });
+		
+		var postParams = {
+			method: 'feedback',
+			name: form.find('[name=name]').val(),
+			phone: form.find('[name=phone]').val()
+		};
+		
+		jQuery('.errorMessage').remove();
+		
+		var rename = /^[a-zA-Zа-яА-ЯёЁ ]*$/i;
+		var rephone = /^[0-9\-\+\(\) ]*$/i;
+		var addr = /\d+/;
+		var addr2 = /^\d+$/;
+
+		if(!postParams.name.length || postParams.name == form.find('[name=name]').attr('data-holder'))
+			return feed.errorMessage(form.find('[name=name]'), 'Вы не заполнили поле "Ваше имя"');
+
+		if(postParams.name.length < 4)
+			return feed.errorMessage(form.find('[name=name]'), 'Неверно заполнено поле "Ваше имя"');
+
+		if(!rename.test(postParams.name))
+			return feed.errorMessage(form.find('[name=name]'), 'Неверно заполнено поле "Ваше имя"');
+			
+		if(!postParams.phone.length || postParams.phone == form.find('[name=phone]').attr('data-holder') || postParams.phone.length < 5)
+			return feed.errorMessage(form.find('[name=phone]'), 'Вы не заполнили поле "Ваш телефон"');
+			
+		if(!rephone.test(postParams.phone))
+			return feed.errorMessage(form.find('[name=phone]'), 'Неверно заполнено поле "Ваш телефон"');
+		
+		form.submit();
+		return false;
+	},
+	errorMessage: function(elem, msg) {
+		jQuery('<div class="errorMessage">' + msg + '</div>').appendTo('body').css({
+			'left': jQuery(elem).offset().left,
+			'top': jQuery(elem).offset().top + 30
+		});
+		return false;
+	}
+};
+$(document).ready(function() {
+	$(".country").on('change', function() {
+		curs 	= $(this).children(":selected").val();
+		$(".country").val(curs);
+		prod_info = $jsonData.prices[curs];
+		total = (prod_info.price + prod_info.delivery_price + prod_info.tax_price);
+		$(".int_price_show").text(prod_info.price + " " + prod_info.currency);
+		$(".int_price_show_prst").text(prod_info.price);
+		$(".int_price_old").text(prod_info.old_price + " " + prod_info.currency);
+		$(".int_price_delivery").text(prod_info.delivery_price);
+		$(".int_price_tax").text(prod_info.tax_price);
+		$(".int_price_total").text(total + " " + prod_info.currency);
+		$(".int_price_currency").text(prod_info.currency);	
+
+		$(".note_name b").text(prod_info.name_template);
+		$(".note_phone b").text(prod_info.phone_template);
+		$(".note_address b").text(prod_info.address_template);	
+	});
+	$('.form_input').focus(function(){
+		$('.errorMessage').hide();
+	});
+
+	var lnk    = $('.button_m');
+	var modal  = $('#callme');
+	var bg     = $('#backg');
+	var close  = $('#clf');
+	var select = $('#color').children('option');
+
+	lnk.on('click', function () {
+
+		var _this = $(this);
+		var colorId = _this.data('id');
+		modal.show();
+		bg.show();
+		select.eq(colorId).attr('selected', 'selected');
+	});
+
+	close.on('click', function () {
+		modal.hide();
+		bg.hide();
+	});
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
